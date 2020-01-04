@@ -1,0 +1,109 @@
+input[type=date]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  display: none;
+}
+input[type="date"]
+{
+  -webkit-appearance: none;
+}
+
+.sliderTag {
+  width: 25%;
+  text-align: center;
+}
+
+.ui-icon-trash {
+  display: inline-block;
+  vertical-align: middle;
+  background-position: -176px -96px;
+  background-image: url(../images/ui-icons_ffffff_256x240.png);
+  width: 16px;
+  height: 16px;
+  margin-top: -.25em;
+  position: relative;
+  text-indent: -99999px;
+  overflow: hidden;
+  background-repeat: no-repeat;
+}
+
+.deleteButton {
+  background-color: rgba(0, 0, 0, 0);
+  border: 0;
+  border-radius: 3px;
+}
+
+.deleteButton:hover {
+  background-color: rgba(255, 255, 255, .05);
+}
+
+.collapsing {
+  -webkit-transition: none;
+  transition: none;
+  display: none;
+}
+
+.table-striped tbody tr:nth-of-type(4n+1),
+.table-striped tbody tr:nth-of-type(4n+2) {
+  background-color: #303030;
+}
+
+.table-striped tbody tr:nth-of-type(4n),
+.table-striped tbody tr:nth-of-type(4n+3) {
+  background-color: #222;
+}
+
+.table-hover tbody tr.collapse {
+  pointer-events: none;
+  border-bottom: 1px solid #444;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: rgb(68, 68, 68);
+}
+
+.table-striped tbody tr td {
+  border: none;
+}
+
+.table-striped thead tr th {
+  border-top: none;
+}
+
+.input-group-prepend button,
+.input-group-append button {
+  border-color: #222;
+}
+
+/* table.dataTable thead .sorting:after,
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before {
+  bottom: .5em;
+  overflow-y: hidden;
+} */
+@media (max-width: 575.98px) {
+  .submit-button {
+    flex: 0 0 20%;
+  }
+}
+
+.table-hover tbody tr:hover td {
+  background: #131313;
+}
+
+@media (max-width: 575.98px) {
+  h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  h2 {
+    font-size: 1.7rem;
+  }
+}

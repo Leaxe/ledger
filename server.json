@@ -1,0 +1,23 @@
+{
+  "state": "active",
+  "mates": [
+    {
+      "name": "Big bird",
+      "rent": 514.82
+    },
+    {
+      "name": "Bert",
+      "rent": 523.64
+    },
+    {
+      "name": "Ernie",
+      "rent": 537.09
+    }
+  ],
+  "categories": [
+    "Utilities",
+    "Groceries",
+    "Household",
+    "Other"
+  ]
+}
