@@ -1,5 +1,47 @@
 {
   "date": "2020-01",
   "list": [
+    {
+      "date": "2020-01-04",
+      "category": "Utilities",
+      "whoPaid": "Big bird",
+      "whoPays": "Everyone",
+      "description": "",
+      "amount": 3,
+      "portions": [
+        1,
+        1,
+        1
+      ],
+      "deleted": false
+    },
+    {
+      "date": "2020-01-04",
+      "category": "Utilities",
+      "whoPaid": "Big bird",
+      "whoPays": "Everyone",
+      "description": "",
+      "amount": 2,
+      "portions": [
+        0.67,
+        0.67,
+        0.66
+      ],
+      "deleted": false
+    },
+    {
+      "date": "2020-01-04",
+      "category": "Utilities",
+      "whoPaid": "Big bird",
+      "whoPays": "Everyone",
+      "description": "",
+      "amount": 2,
+      "portions": [
+        0.67,
+        0.67,
+        0.66
+      ],
+      "deleted": false
+    }
   ]
 }

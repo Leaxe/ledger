@@ -6,20 +6,6 @@ const bodyParser = require("body-parser");
 const _ = require('lodash');
 const fs = require('fs');
 
-// TODO: date displayed is wrong (11/17 vs 11/16)
-// TODO: delete/edit rows: will probably mean changing from post, since this is special
-//    https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=table-with-add-and-delete-row-feature
-// TODO: auto-backup daily? incase accidentally deleting stuff
-// TODO: datatable for floating header and responsive to the bottom of screen
-//    https://datatables.net/download/
-//    https://mdbootstrap.com/docs/jquery/tables/scroll/
-// TODO: cleanup formatLedger()
-// TODO: color rents (green and red or whatever)
-// TODO: server json file that has rent state (paying/not paying)
-//  and base rents (maybe even constants for tenant names)
-// TODO: prevent new expense from being added from pages that haven't refreshed
-//  before "Pay rent" has started
-
 app.use(express.static('public'));
 
 app.use(bodyParser.json());
@@ -42,11 +28,12 @@ let getLedgerJson = function(date = 'active') {
   return JSON.parse(fs.readFileSync('ledger/active.json'));
 }
 
-//computes the balanced rent values
+//creates new ledger object and computes balanced rent
 let computeLedger = function(ledger) {
   let newLedger = _.cloneDeep(ledger);
+
+  //copy server mate/rent information to new ledger and calculate total
   newLedger.baseRent = {};
-  newLedger.balancedRent = {};
   let sum = 0;
   for (let i = 0; i < server.mates.length; i++) {
     let mate = server.mates[i];
@@ -56,21 +43,18 @@ let computeLedger = function(ledger) {
   newLedger.totalRent = sum;
   newLedger.balancedRent = _.clone(newLedger.baseRent);
 
+  //calculate balanced rent from expenses
   let rent = newLedger.balancedRent;
   for (let i = 0; i < newLedger.list.length; i++) {
-    if (newLedger.list[i].deleted)
-      continue;
     let expense = newLedger.list[i];
-    let whoPaid = expense.whoPaid;
-    let whoPays = expense.whoPays;
-    let amount = expense.amount;
-    let portions = expense.portions;
 
-    console.log(expense.portions);
-    rent[whoPaid] -= amount;
+    if (expense.deleted)
+      continue;
+
+    rent[expense.whoPaid] -= expense.amount;  //person who paid is compensated
     for (let i = 0; i < server.mates.length; i++) {
       let mate = server.mates[i].name;
-      rent[mate] += expense.portions[i];
+      rent[mate] += expense.portions[i];      //everyone else coughs up
     }
   }
 
@@ -95,6 +79,7 @@ let formatLedger = function(ledger) {
   const dateFormatDay = new Intl.DateTimeFormat('en-US', {timeZone: 'UTC'});
   ledger.date = dateFormatMonth.format(dateObjectMonth);
 
+  //excludes deleted expenses and formats date and number for others
   let index = -1;
   for (let i = 0; i < ledger.list.length; i++) {
     index++;
@@ -111,10 +96,11 @@ let formatLedger = function(ledger) {
     expense.date = dateFormatDay.format(expense.date);
   }
 
+  //sort for most recent at the top
   ledger.list.sort((a, b) => new Date(b.date) - new Date(a.date));
-
 }
 
+//update ledger object and send rendered page to client
 let updateClient = function(res, ledger) {
   //compute rent values and format for pug
   let ledgerComputed = computeLedger(ledger);
@@ -131,17 +117,21 @@ let updateClient = function(res, ledger) {
 
 }
 
+//update active.json with current ledger object
 let updateJson = function(path, ledger) {
   let ledgerJson = JSON.stringify(ledger, null, 2);
   fs.writeFileSync(path, ledgerJson, (err)={});
 }
 
+//initial request
 app.get('/', function(req, res) {
   let ledger = getLedgerJson();
 
   updateClient(res, ledger);
 });
 
+//set the server to disabled state
+// (payment is in progress, step required to progress to next month)
 app.get('/disabled', function(req, res) {
   console.log('disable');
   let ledger = getLedgerJson();
@@ -153,6 +143,7 @@ app.get('/disabled', function(req, res) {
   updateClient(res, ledger);
 });
 
+//progress to next month and set server back to active state
 app.get('/reset', function(req, res) {
   console.log('reset');
   //if (server.state == 'active') {}
@@ -180,12 +171,14 @@ app.get('/reset', function(req, res) {
   updateClient(res, ledger);
 });
 
+//refresh button on ledger table
 app.post('/refresh', function(req, res) {
   let ledger = getLedgerJson();
 
   updateClient(res, ledger);
 });
 
+//expense form submit
 app.post('/submit', function(req, res) {
   console.log('Entry received:\n', req.body);
 
@@ -201,10 +194,10 @@ app.post('/submit', function(req, res) {
   updateJson('ledger/active.json', ledger);
 });
 
+//delete individual expense (trash can on each row)
 app.post('/delete', function(req, res) {
   console.log('Deleted index: ', req.body.index);
 
-  //delete expense
   let ledger = getLedgerJson();
   ledger.list[parseInt(req.body.index)].deleted = true;
 
