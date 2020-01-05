@@ -156,7 +156,7 @@ app.get('/reset', function(req, res) {
 
   //add in mate and rent information for archival
   ledger = computeLedger(ledger);
-  updateJson(ledger);
+  updateJson('ledger/active.json', ledger);
   //copy ledger to archive
   let newPath = 'ledger/archive/' + ledger.date + '.json';
   fs.copyFileSync('ledger/active.json', newPath);
@@ -171,10 +171,9 @@ app.get('/reset', function(req, res) {
     month = '0' + month;
   template.date = year + '-' + month;
 
-  let ledgerJson = JSON.stringify(template, null, 2);
-  fs.writeFileSync('ledger/active.json', ledgerJson, (err)={});
 
-  updateClient(res, ledger);
+  updateClient(res, template);
+  updateJson('ledger/active.json', template);
 });
 
 //refresh button on ledger table
