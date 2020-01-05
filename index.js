@@ -149,13 +149,19 @@ app.get('/reset', function(req, res) {
   //if (server.state == 'active') {}
   let ledger = getLedgerJson();
 
+  //set server back to active
   server.state = 'active';
   let serverJson = JSON.stringify(server, null, 2);
   fs.writeFileSync('server.json', serverJson, (err)={});
 
-  let oldPath = 'ledger/archive/' + ledger.date + '.json';
-  fs.copyFileSync('ledger/active.json', oldPath);
+  //add in mate and rent information for archival
+  ledger = computeLedger(ledger);
+  updateJson(ledger);
+  //copy ledger to archive
+  let newPath = 'ledger/archive/' + ledger.date + '.json';
+  fs.copyFileSync('ledger/active.json', newPath);
 
+  //create new active.json
   let template = JSON.parse(fs.readFileSync('ledger/template.json'));
   let newDate = new Date(ledger.date);
   newDate.setUTCMonth(newDate.getUTCMonth() + 1);
