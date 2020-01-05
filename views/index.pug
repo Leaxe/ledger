@@ -134,11 +134,21 @@ head
             button.deleteButton
               span.ui-icon-trash
         tr(id=collapseId).collapse
-          if (expense.description == 0)
-            td.font-italic(colspan='6') No description provided.
-          else
-            td(colspan='6')
-              span.font-weight-bold Description: 
-              = expense.description
+          td(colspan='6')
+            .row
+              if (expense.description == 0)
+                .col.font-italic(style='text-align: center') No description provided.
+              else
+                .col= expense.description
+              .col
+                table.table.table-sm.mb-0
+                  thead
+                    tr(style='background-color: rgba(0, 0, 0, 0)')
+                      each mate in server.mates
+                        th(scope='col')= mate.name
+                  tbody
+                    tr(style='background-color: rgba(0, 0, 0, 0)')
+                      each portion in expense.portions
+                        td= '$' + portion
 script
   include script.js

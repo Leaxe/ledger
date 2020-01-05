@@ -21,7 +21,7 @@ $(document).ready(function() {
     }));
     let errorSum = errorArr.reduce((a, b) => ({value: a.value + b.value})).value;
     let totalRoundingError = parseFloat(errorSum.toFixed(precision));
-    console.log(roundedArr, errorArr, errorSum, totalRoundingError);
+    //console.log(roundedArr, errorArr, errorSum, totalRoundingError);
     errorArr.sort((a, b) => (Math.abs(a.value) < Math.abs(b.value)) ? 1 : -1);
     for (let i = 0; i < Math.abs(totalRoundingError) * Math.pow(10, precision); i++) {
       roundedArr[errorArr[i].index] += Math.sign(totalRoundingError) * Math.pow(10, -precision);
@@ -113,8 +113,20 @@ $(document).ready(function() {
     valuesArray.push(100 / mates.length * i);
   }
 
+  function stopHandler(ev, ui) {
+    slideHandler(ev, ui);
+
+    //check if we have a "who pays" preset
+    if (ui.values.every((x, i) => x == 100 / mates.length * (i + 1))) { //Everyone
+      $('#whoPays').prop('selectedIndex', 1);
+    }
+    else if (ui.values.every(x => x == 0 || x == 100)) { //Individuals
+      let handlesOnLeft = ui.values.filter(x => x == 0).length;
+      $('#whoPays').prop('selectedIndex', handlesOnLeft + 2);
+    }
+  }
+
   function slideHandler(ev, ui) {
-    console.log($('#whoPays option[value="Custom"]'));
     $('#whoPays').prop('selectedIndex', 0);
     updateLabels(ui.values);
   }
@@ -125,7 +137,7 @@ $(document).ready(function() {
     step: 1,
     values: valuesArray,
     slide: slideHandler,
-    stop: slideHandler
+    stop: stopHandler
   }
 
   function init() {
