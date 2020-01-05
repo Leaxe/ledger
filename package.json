@@ -1,0 +1,31 @@
+{
+  "name": "ledger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Leaxe/ledger.git"
+  },
+  "keywords": [
+    "ledger"
+  ],
+  "author": "Leaxe, silso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Leaxe/ledger/issues"
+  },
+  "homepage": "https://github.com/Leaxe/ledger#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "pug": "^2.0.4"
+  },
+  "nodemonConfig": {
+    "ignore": ["*.json"]
+  }
+}
