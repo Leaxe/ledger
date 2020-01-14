@@ -174,6 +174,16 @@ $(document).ready(function() {
     });
   }
 
+  $('.deleteButton').click(function(e) {
+    e.stopPropagation();
+  });
+
+  $('#sliderCollapse').on('show.bs.collapse', function(e) {
+    $('#whoPaysButtonChevron').addClass('rotated');
+  }).on('hide.bs.collapse', function(e) {
+    $('#whoPaysButtonChevron').removeClass('rotated');
+  });
+
   init();
 
   //for datadable thing

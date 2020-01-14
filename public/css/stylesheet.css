@@ -12,6 +12,27 @@ input[type="date"]
   text-align: center;
 }
 
+#whoPaysButton {
+  padding-right: 0.375rem;
+}
+
+#whoPaysButtonChevron {
+  display: inline-block;
+  content: url(../images/chevron-down.svg);
+  height: 20px;
+  width: 24px;
+  transition: transform 500ms;
+}
+
+#whoPaysButtonChevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* avoids jolt for some reason*/
+#sliderCollapse {
+  overflow: hidden;
+}
+
 .ui-icon-trash {
   display: inline-block;
   vertical-align: middle;
@@ -36,28 +57,12 @@ input[type="date"]
   background-color: rgba(255, 255, 255, .05);
 }
 
-.collapsing {
-  -webkit-transition: none;
-  transition: none;
-  display: none;
-}
-
-.table-striped tbody tr:nth-of-type(4n+1),
-.table-striped tbody tr:nth-of-type(4n+2) {
+.table-striped > tbody:nth-of-type(odd) > tr {
   background-color: #303030;
 }
 
-.table-striped tbody tr:nth-of-type(4n),
-.table-striped tbody tr:nth-of-type(4n+3) {
+.table-striped > tbody:nth-of-type(even) > tr {
   background-color: #222;
-}
-
-.table-hover tbody tr.collapse {
-  pointer-events: none;
-  border-bottom: 1px solid #444;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: rgb(68, 68, 68);
 }
 
 .table-striped tbody tr td {
@@ -71,6 +76,10 @@ input[type="date"]
 .input-group-prepend button,
 .input-group-append button {
   border-color: #222;
+}
+
+.rowBody:hover tr {
+  background-color: #131313 !important;
 }
 
 /* table.dataTable thead .sorting:after,
@@ -90,10 +99,6 @@ table.dataTable thead .sorting_desc_disabled:before {
   .submit-button {
     flex: 0 0 20%;
   }
-}
-
-.table-hover tbody tr:hover td {
-  background: #131313;
 }
 
 @media (max-width: 575.98px) {

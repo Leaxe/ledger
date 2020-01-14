@@ -69,7 +69,8 @@ head
       .col
         .input-group
           .input-group-prepend
-            button.btn.btn-secondary(type='button' data-toggle='collapse' data-target='#sliderCollapse') Who pays
+            button#whoPaysButton.btn.btn-secondary(type='button' data-toggle='collapse' data-target='#sliderCollapse, #whoPaysButtonChevronWrapper') Who pays 
+              img#whoPaysButtonChevron
             //span.input-group-text Who pays
           select#whoPays.custom-select(required name='whoPays')
             option(hidden) Custom
@@ -116,14 +117,14 @@ head
         th(scope='col') Who pays
         th(scope='col' style='width: 10%; min-width: 5em') Amount
         th(scope='col' style='width: 2.7em') 
-    tbody
-      if (ledger.list.length == 0)
-        td.text-center.font-italic(colspan='6') No list data found.
-      
-      each expense in ledger.list
-        - let collapseIdHash = '#collapse' + expense.index
-        - let collapseId = 'collapse' + expense.index
-        tr.clickable-row(data-toggle='collapse' href=collapseIdHash data-row-index=expense.index)
+    if (ledger.list.length == 0)
+      td.text-center.font-italic(colspan='6') No list data found.
+    
+    each expense in ledger.list
+      - let collapseIdHash = '#collapse' + expense.index
+      - let collapseId = 'collapse' + expense.index
+      tbody.rowBody(data-toggle='collapse' href=collapseIdHash)
+        tr(data-row-index=expense.index)
           td= expense.date
           td= expense.category
           td= expense.whoPaid
@@ -133,11 +134,11 @@ head
           td
             button.deleteButton
               span.ui-icon-trash
-        tr(id=collapseId).collapse
-          td(colspan='6')
-            .row
+        tr.collapseRow
+          td(colspan='6' style='padding-top: 0; padding-bottom: 0')
+            .row.collapse(id=collapseId)
               if (expense.description == 0)
-                .col.font-italic(style='text-align: center') No description provided.
+                .col.font-italic(style='text-align: center; padding-top: 0.3rem; padding-bottom: 0.3rem') No description provided.
               else
                 .col= expense.description
               .col
