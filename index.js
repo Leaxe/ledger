@@ -210,4 +210,15 @@ app.post('/delete', function(req, res) {
   updateJson('ledger/active.json', ledger);
 });
 
+//undo individual expense deletion
+app.post('/undo', function(req, res) {
+  console.log('Undone index: ', req.body.index);
+
+  let ledger = getLedgerJson();
+  ledger.list[parseInt(req.body.index)].deleted = false;
+
+  updateClient(res, ledger);
+  updateJson('ledger/active.json', ledger);
+});
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

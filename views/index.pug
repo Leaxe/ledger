@@ -6,14 +6,15 @@ head
   script(src='js/bootstrap/bootstrap.bundle.min.js')
   //script(src='//cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/datatables.min.js')
   
-  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  script(src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js')
+  link(rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css')
   
   link(rel='stylesheet' href='css/bootstrap/bootstrap_dark.min.css')
   link(rel='stylesheet' href='css/stylesheet.css')
   
-  //link(rel='stylesheet' href='//cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/datatables.min.css"')
+  //link(rel='stylesheet' href='//cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/datatables.min.css')
   title Expenses
+  script let deleteIndex = -1;
 .container
   #rentDue.jumbotron.mt-3.py-3.mb-3
     .row
@@ -22,7 +23,7 @@ head
           small.text-muted= ledger.totalRent
       .col-2
         div(style='position:relative; height:100%')
-          button#rentButton.btn.btn-warning.mb-2(style='position:absolute; right:0; bottom:0') Pay&#160rent
+          button#rentButton.btn.btn-warning.mb-2(style='position:absolute; right:0; bottom:0') Pay&#160;rent
     table.table.table-borderless.table-sm
       thead
         tr
@@ -69,9 +70,8 @@ head
       .col
         .input-group
           .input-group-prepend
-            button#whoPaysButton.btn.btn-secondary(type='button' data-toggle='collapse' data-target='#sliderCollapse, #whoPaysButtonChevronWrapper') Who pays 
-              img#whoPaysButtonChevron
-            //span.input-group-text Who pays
+            button#whoPaysButton.btn.btn-secondary(type='button' data-toggle='collapse' data-target='#sliderCollapse') Who pays 
+              img#whoPaysButtonChevron(src='/images/chevron-down.svg')
           select#whoPays.custom-select(required name='whoPays')
             option(hidden) Custom
             option(selected) Everyone
@@ -151,5 +151,9 @@ head
                     tr(style='background-color: rgba(0, 0, 0, 0)')
                       each portion in expense.portions
                         td= '$' + portion
+.container.fixed-bottom.collapse(id='undoAlert' style='text-align: center')
+  .alert.alert-dark(role='alert' style='display: inline-block; box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5); white-space: nowrap')
+    button#undoButton.btn.btn-primary.mr-3 Undo
+    button.close.align-middle(data-toggle='collapse' data-target='#undoAlert' style='line-height: inherit; float: none;') &times;
 script
   include script.js

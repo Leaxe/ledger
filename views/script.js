@@ -164,9 +164,19 @@ $(document).ready(function() {
       $.post('/refresh').done(updateBody);
     });
 
+    function showUndoButton() {
+      let undoAlert = $('#undoAlert');
+      $('#undoAlert').collapse('show')
+      setTimeout(function() {
+        $('#undoAlert').collapse('hide');
+      }, 5000);
+    }
+
     $('.deleteButton').on('click', function(e) {
-      console.log('delete...', e.currentTarget.parentElement.parentElement.getAttribute('data-row-index'));
-      $.post('/delete', {index: e.currentTarget.parentElement.parentElement.getAttribute('data-row-index')}).done(updateBody);
+      e.stopPropagation();
+      deleteIndex = e.currentTarget.parentElement.parentElement.getAttribute('data-row-index');
+      console.log('delete...', deleteIndex);
+      $.post('/delete', {index: deleteIndex}).done(updateBody, showUndoButton);
     });
 
     $('#rentButton').on('click', function(e) {
@@ -174,14 +184,14 @@ $(document).ready(function() {
     });
   }
 
-  $('.deleteButton').click(function(e) {
-    e.stopPropagation();
-  });
-
   $('#sliderCollapse').on('show.bs.collapse', function(e) {
     $('#whoPaysButtonChevron').addClass('rotated');
   }).on('hide.bs.collapse', function(e) {
     $('#whoPaysButtonChevron').removeClass('rotated');
+  });
+
+  $('#undoButton').on('click', function(e) {
+    $.post('/undo', {index: deleteIndex}).done(updateBody);
   });
 
   init();
