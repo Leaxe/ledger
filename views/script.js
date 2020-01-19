@@ -9,7 +9,6 @@ $(document).ready(function() {
     // this can probably be simplified by sending returning different data from server
     let parser = new DOMParser();
     $('body').html(parser.parseFromString(data, 'text/html').body.outerHTML);
-    init();
   }
 
   //round such that total remains correct
@@ -166,9 +165,9 @@ $(document).ready(function() {
 
     function showUndoButton() {
       let undoAlert = $('#undoAlert');
-      $('#undoAlert').collapse('show')
+      undoAlert.collapse('show');
       setTimeout(function() {
-        $('#undoAlert').collapse('hide');
+        undoAlert.collapse('hide');
       }, 5000);
     }
 
