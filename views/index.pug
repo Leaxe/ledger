@@ -77,16 +77,17 @@ head
             option(selected) Everyone
             each mate in server.mates
               option= mate.name
-    #sliderCollapse.container.collapse
-      #mateNames.sliderTagRow.row.mb-0
-        each mate in server.mates
-          p.sliderTag.mb-0= mate.name
-      #mateVals.sliderTagRow.row.mb-0
-        each mate in server.mates
-          p.sliderTag.mb-0= 100 / server.mates.length + '%'
-      .row.mb-3
-        .col.p-0
-          #slider.slider(style='width: 100%')
+    #sliderCollapse.container.collapse(style='text-align: center;')
+      div(style="display: inline-block; width: calc(100% - 1.2em);")
+        #mateNames.sliderTagRow.row.mb-0
+          each mate in server.mates
+            p.sliderTag.mb-0(style='white-space: nowrap;')= mate.name
+        #mateVals.sliderTagRow.row.mb-0
+          each mate in server.mates
+            p.sliderTag.mb-0= 100 / server.mates.length + '%'
+        .row.mb-3
+          .col.p-0
+            #slider.slider(style='width: 100%;')
     .row
       .col-sm-6.mb-3
         .input-group
@@ -153,6 +154,7 @@ head
                         td= '$' + portion
 .container.fixed-bottom.collapse(id='undoAlert' style='text-align: center')
   .alert.alert-dark(role='alert' style='display: inline-block; box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5); white-space: nowrap')
+    strong.mr-2 Expense deleted.
     button#undoButton.btn.btn-primary.mr-3 Undo
     button.close.align-middle(data-toggle='collapse' data-target='#undoAlert' style='line-height: inherit; float: none;') &times;
 script

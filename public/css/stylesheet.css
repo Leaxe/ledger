@@ -1,3 +1,8 @@
+:root {
+  --bg: #222;
+  --very-dark: #131313;
+}
+
 input[type=date]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   display: none;
@@ -28,8 +33,28 @@ input[type="date"]
 }
 
 /* avoids jolt for some reason*/
-#sliderCollapse {
-  overflow: hidden;
+#sliderCollapse.collapsing {
+  /*overflow: hidden;*/
+}
+
+.ui-slider.ui-slider-horizontal {
+  height: 0.5em;
+  background-color: var(--secondary);
+  border: none;
+}
+
+#slider > .ui-slider-handle {
+  width: 0.8em;
+  height: 1.3em;
+  top: -0.4em;
+  margin-left: -.4em;
+  background: none;
+  background-color: white;
+  border: none;
+}
+
+#slider > .ui-slider-handle.ui-state-hover {
+  background-color: lightgrey;
 }
 
 .ui-icon-trash {
@@ -57,11 +82,11 @@ input[type="date"]
 }
 
 .table-striped > tbody:nth-of-type(odd) > tr {
-  background-color: #303030;
+  background-color: var(--dark);
 }
 
 .table-striped > tbody:nth-of-type(even) > tr {
-  background-color: #222;
+  background-color: var(--bg);
 }
 
 .table-striped tbody tr td {
@@ -74,26 +99,17 @@ input[type="date"]
 
 .input-group-prepend button,
 .input-group-append button {
-  border-color: #222;
+  border-color: var(--bg);
+}
+
+.rowBody {
+  cursor: pointer;
 }
 
 .rowBody:hover tr {
-  background-color: #131313 !important;
+  background-color: var(--very-dark) !important;
 }
 
-/* table.dataTable thead .sorting:after,
-table.dataTable thead .sorting:before,
-table.dataTable thead .sorting_asc:after,
-table.dataTable thead .sorting_asc:before,
-table.dataTable thead .sorting_asc_disabled:after,
-table.dataTable thead .sorting_asc_disabled:before,
-table.dataTable thead .sorting_desc:after,
-table.dataTable thead .sorting_desc:before,
-table.dataTable thead .sorting_desc_disabled:after,
-table.dataTable thead .sorting_desc_disabled:before {
-  bottom: .5em;
-  overflow-y: hidden;
-} */
 @media (max-width: 575.98px) {
   .submit-button {
     flex: 0 0 20%;
