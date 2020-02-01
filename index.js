@@ -112,7 +112,7 @@ let updateClient = function(res, ledger) {
     res.render('index', {ledger: ledgerComputed, server: server, mates: mates});
   }
   else {
-    res.render('disabled', {ledger: ledgerComputed});
+    res.render('disabled', {ledger: ledgerComputed, server: server, mates: mates});
   }
 
 }

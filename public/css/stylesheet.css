@@ -23,7 +23,7 @@ input[type="date"]
 
 #whoPaysButtonChevron {
   display: inline-block;
-  height: 20px;
+  height: 18px;
   width: 24px;
   transition: transform 500ms;
 }
