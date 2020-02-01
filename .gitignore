@@ -2,4 +2,3 @@ node_modules
 *.swp
 ledger
 server.json
-disabled.pug

@@ -1,0 +1,153 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+  script(src='js/jquery-3.4.1.min.js')
+  script(src='js/bootstrap/bootstrap.bundle.min.js')
+  //script(src='//cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/datatables.min.js')
+  
+  script(src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js')
+  link(rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css')
+  
+  link(rel='stylesheet' href='css/bootstrap/bootstrap_dark.min.css')
+  link(rel='stylesheet' href='css/stylesheet.css')
+  
+  //link(rel='stylesheet' href='//cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/datatables.min.css')
+  title Expenses
+  script let deleteIndex = -1;
+.container
+  #rentDue.jumbotron.mt-3.py-3.mb-3
+    .row
+      .col
+        h2 Monthly rent: 
+          small.text-muted= ledger.totalRent
+      .col-2
+        div(style='position:relative; height:100%')
+          button#newMonthButton.btn.btn-warning.mb-2(style='position:absolute; right:0; bottom:0') New&#160;month
+    table.table.table-borderless.table-sm
+      thead
+        tr
+          th(scope='col' style='width: 8.3em')
+          each mate in server.mates
+            th.h5(scope='col')= mate.name
+        tr
+          th.h5.text-right(scope='row') Base rent
+          each mate in ledger.baseRent
+            td= mate.substr(0, mate.indexOf('.'))
+              span.text-muted= mate.substr(mate.indexOf('.'))
+        tr
+          th.h5.text-right(scope='row') Balanced rent
+          each mate in ledger.balancedRent
+            td= mate.substr(0, mate.indexOf('.'))
+              span.text-muted= mate.substr(mate.indexOf('.'))
+          
+#addExpense.container(data-mates= mates)
+  h1 Add expense
+  form#expenseForm
+    .row.mb-3
+      .col
+        .input-group
+          .input-group-prepend
+            span.input-group-text Date
+          input#datePicker.form-control(type='date' required='' name='date' disabled)
+      .col
+        .input-group
+          .input-group-prepend
+            span.input-group-text Category
+          select.custom-select(required name='category' disabled)
+            option(disabled value='' selected hidden) Category...
+            each category in server.categories
+              option= category
+    .row.mb-3
+      .col
+        .input-group
+          .input-group-prepend
+            span.input-group-text Who paid
+          select#whoPaid.custom-select(required name='whoPaid' disabled)
+            option(disabled value='' selected hidden) Who paid...
+            each mate in server.mates
+              option= mate.name
+      .col
+        .input-group
+          .input-group-prepend
+            span.input-group-text Who pays 
+              img#whoPaysButtonChevron(src='/images/chevron-down.svg')
+          select#whoPays.custom-select(required name='whoPays' disabled)
+    #sliderCollapse.container.collapse(style='text-align: center;')
+      div(style="display: inline-block; width: calc(100% - 1.2em);")
+        #mateNames.sliderTagRow.row.mb-0
+          each mate in server.mates
+            p.sliderTag.mb-0(style='white-space: nowrap;')= mate.name
+        #mateVals.sliderTagRow.row.mb-0
+          each mate in server.mates
+            p.sliderTag.mb-0= 100 / server.mates.length + '%'
+        .row.mb-3
+          .col.p-0
+            #slider.slider(style='width: 100%;')
+    .row
+      .col-sm-6.mb-3
+        .input-group
+          .input-group-prepend
+            span.input-group-text Description
+          textarea.form-control(rows='1' name='description' placeholder='Description' disabled)
+      .col.mb-3
+        .input-group
+          .input-group-prepend
+            span.input-group-text Amount
+          input#amountInput.form-control(autocomplete='off' type='number' step='0.01' min='0' placeholder='Amount...' required name='amount' disabled)
+      .col-3.col-sm-2.submit-button
+        button#submitButton.btn.btn-primary.float-right(type='submit' disabled) Submit
+#ledger.container
+  .row
+    .col
+      h1 Ledger 
+        small.text-muted= ledger.date
+    .col-3.text-right
+      div(style='position:relative; height:100%')
+        button#refreshButton.btn.btn-primary.mb-2(style='position:absolute; right:0; bottom:0') Refresh
+  table#ledgerTable.table.table-striped.table-sm.table-hover
+    thead#ledgerTableHead
+      tr
+        th(scope='col') Date
+        th(scope='col') Category
+        th(scope='col') Who paid
+        th(scope='col') Who pays
+        th(scope='col' style='width: 10%; min-width: 5em') Amount
+    if (ledger.list.length == 0)
+      td.text-center.font-italic(colspan='6') No list data found.
+    
+    each expense in ledger.list
+      - let collapseIdHash = '#collapse' + expense.index
+      - let collapseId = 'collapse' + expense.index
+      tbody.rowBody(data-toggle='collapse' href=collapseIdHash)
+        tr(data-row-index=expense.index)
+          td= expense.date
+          td= expense.category
+          td= expense.whoPaid
+          td= expense.whoPays
+          td.text-right= expense.amount.substr(0,expense.amount.indexOf('.'))
+            span.text-muted= expense.amount.substr(expense.amount.indexOf('.'))
+        tr.collapseRow
+          td(colspan='6' style='padding-top: 0; padding-bottom: 0')
+            .row.collapse(id=collapseId)
+              if (expense.description == 0)
+                .col.font-italic(style='text-align: center; padding-top: 0.3rem; padding-bottom: 0.3rem') No description provided.
+              else
+                .col= expense.description
+              .col
+                table.table.table-sm.mb-0
+                  thead
+                    tr(style='background-color: rgba(0, 0, 0, 0)')
+                      each mate in server.mates
+                        th(scope='col')= mate.name
+                  tbody
+                    tr(style='background-color: rgba(0, 0, 0, 0)')
+                      each portion in expense.portions
+                        td= '$' + portion
+.container.fixed-bottom.collapse(id='undoAlert' style='text-align: center')
+  .alert.alert-dark(role='alert' style='display: inline-block; box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5); white-space: nowrap')
+    strong.mr-2 Expense deleted.
+    button#undoButton.btn.btn-primary.mr-3 Undo
+    button.close.align-middle(data-toggle='collapse' data-target='#undoAlert' style='line-height: inherit; float: none;') &times;
+script
+  include disabled.js
