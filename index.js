@@ -143,6 +143,18 @@ app.get('/disabled', function(req, res) {
   updateClient(res, ledger);
 });
 
+//set the server back to active state
+app.get('/back', function(req, res) {
+  console.log('back');
+  let ledger = getLedgerJson();
+
+  server.state = 'active';
+  let serverJson = JSON.stringify(server, null, 2);
+  fs.writeFileSync('server.json', serverJson, (err)={});
+
+  updateClient(res, ledger);
+});
+
 //progress to next month and set server back to active state
 app.get('/reset', function(req, res) {
   console.log('reset');
