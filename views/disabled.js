@@ -11,6 +11,10 @@ $(document).ready(function() {
     $('#newMonthButton').on('click', function(e) {
       $.get('/reset').done(updateBody);
     });
+
+    $('#goBackButton').on('click', function(e) {
+      $.get('/back').done(updateBody);
+    });
   }
 
   init();

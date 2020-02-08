@@ -12,6 +12,10 @@ input[type="date"]
   -webkit-appearance: none;
 }
 
+#goBackButton {
+  border-radius: 0 0.3rem 0.3rem 0 !important;
+}
+
 .sliderTag {
   width: 25%;
   text-align: center;

@@ -37,6 +37,24 @@ $(document).ready(function() {
     return ranges;
   }
 
+  function setCookie(key, value, expireSeconds) {
+    let date = new Date();
+    date.setTime(date.getTime() + (1000 * expireSeconds));
+    document.cookie = `${key}=${value}; expires=${date.toGMTString()}`;
+  };
+
+  function getCookie(inputKey) {
+    let cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      let cookieKey = cookies[i].split('=')[0];
+      var value = cookies[i].split('=')[1];
+      if (cookieKey === inputKey) {
+        return value;
+      }
+    }
+    return "";
+  };
+
   let mates = JSON.parse(document.getElementById('addExpense').dataset.mates);
   function updateLabels(rawValues) {
     let ranges = calculateRanges(rawValues);
@@ -141,6 +159,10 @@ $(document).ready(function() {
 
   function init() {
     $('#datePicker').val(new Date().toDateInputValue()); // default date to today
+    let whoPaidCookie = getCookie("whoPaid");
+    if (whoPaidCookie) {
+      $('#whoPaid').val(whoPaidCookie);
+    }
 
     initCustomPayment();
 
@@ -157,6 +179,10 @@ $(document).ready(function() {
       formData[formData.length] = {name: 'portions', value: ranges};
 
       $.post('/submit', formData).done(updateBody);
+    });
+
+    $('#whoPaid').on('change', function(e) {
+      setCookie('whoPaid', e.target.value, 60 * 60 * 24 * 30);
     });
 
     $('#refreshButton').on('click', function(e) {
