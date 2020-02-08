@@ -168,8 +168,12 @@ $(document).ready(function() {
       undoAlert.collapse('show');
       setTimeout(function() {
         undoAlert.collapse('hide');
-      }, 5000);
+      }, 50000);
     }
+    
+    setTimeout(function() {
+      $('#stateUpdateAlert').fadeOut(500);
+    }, 10000);
 
     $('.deleteButton').on('click', function(e) {
       e.stopPropagation();

@@ -101,10 +101,16 @@ let formatLedger = function(ledger) {
 }
 
 //update ledger object and send rendered page to client
-let updateClient = function(res, ledger) {
+let updateClient = function(path, res, ledger) {
+  console.log(path);
   //compute rent values and format for pug
   let ledgerComputed = computeLedger(ledger);
   formatLedger(ledgerComputed);
+
+  let requests = {};
+  requests.update = ['/refresh'];
+  requests.expense = ['/submit', '/delete', '/undo'];
+  // disabled and reset dont need alerts since the user won't know they didnt activate it.
 
   let mates = JSON.stringify(server.mates.map(mate => mate.name));
   //send to client
@@ -112,9 +118,19 @@ let updateClient = function(res, ledger) {
     res.render('index', {ledger: ledgerComputed, server: server, mates: mates});
   }
   else {
-    res.render('disabled', {ledger: ledgerComputed, server: server, mates: mates});
+    if (requests.update.includes(path)) {
+      console.log('update');
+      let alert = 'It is time to pay rent.';
+      res.render('alert', {alert: alert, ledger: ledgerComputed, server: server, mates: mates});
+    }
+    else if (requests.expense.includes(path)) {
+      let alert = 'It is time to pay rent. Submit your expense on the next month once rent has been paid.';
+      res.render('alert', {alert: alert, ledger: ledgerComputed, server: server, mates: mates});
+    }
+    else {
+      res.render('disabled', {ledger: ledgerComputed, server: server, mates: mates});
+    }
   }
-
 }
 
 //update active.json with current ledger object
@@ -127,52 +143,55 @@ let updateJson = function(path, ledger) {
 app.get('/', function(req, res) {
   let ledger = getLedgerJson();
 
-  updateClient(res, ledger);
+  updateClient(req.path, res, ledger);
 });
 
 //set the server to disabled state
 // (payment is in progress, step required to progress to next month)
 app.get('/disabled', function(req, res) {
-  console.log('disable');
   let ledger = getLedgerJson();
 
-  server.state = 'disabled';
-  let serverJson = JSON.stringify(server, null, 2);
-  fs.writeFileSync('server.json', serverJson, (err)={});
+  if (server.state == 'active') {
+    console.log('disable');
+    server.state = 'disabled';
+    let serverJson = JSON.stringify(server, null, 2);
+    fs.writeFileSync('server.json', serverJson, (err)={});
+  }
 
-  updateClient(res, ledger);
+  updateClient(req.path, res, ledger);
 });
 
 //progress to next month and set server back to active state
 app.get('/reset', function(req, res) {
-  console.log('reset');
-  //if (server.state == 'active') {}
   let ledger = getLedgerJson();
 
-  //set server back to active
-  server.state = 'active';
-  let serverJson = JSON.stringify(server, null, 2);
-  fs.writeFileSync('server.json', serverJson, (err)={});
+  if (server.state == 'disabled') {
+    console.log('reset');
 
-  //add in mate and rent information for archival
-  ledger = computeLedger(ledger);
-  updateJson('ledger/active.json', ledger);
-  //copy ledger to archive
-  let newPath = 'ledger/archive/' + ledger.date + '.json';
-  fs.copyFileSync('ledger/active.json', newPath);
+    //set server back to active
+    server.state = 'active';
+    let serverJson = JSON.stringify(server, null, 2);
+    fs.writeFileSync('server.json', serverJson, (err)={});
 
-  //create new active.json
-  let template = JSON.parse(fs.readFileSync('ledger/template.json'));
-  let newDate = new Date(ledger.date);
-  newDate.setUTCMonth(newDate.getUTCMonth() + 1);
-  let year = newDate.getUTCFullYear();
-  let month = newDate.getUTCMonth() + 1;
-  if (month < 10)
-    month = '0' + month;
-  template.date = year + '-' + month;
+    //add in mate and rent information for archival
+    ledger = computeLedger(ledger);
+    updateJson('ledger/active.json', ledger);
+    //copy ledger to archive
+    let newPath = 'ledger/archive/' + ledger.date + '.json';
+    fs.copyFileSync('ledger/active.json', newPath);
 
+    //create new active.json
+    let template = JSON.parse(fs.readFileSync('ledger/template.json'));
+    let newDate = new Date(ledger.date);
+    newDate.setUTCMonth(newDate.getUTCMonth() + 1);
+    let year = newDate.getUTCFullYear();
+    let month = newDate.getUTCMonth() + 1;
+    if (month < 10)
+      month = '0' + month;
+    template.date = year + '-' + month;
+  }
 
-  updateClient(res, template);
+  updateClient(req.path, res, template);
   updateJson('ledger/active.json', template);
 });
 
@@ -180,44 +199,53 @@ app.get('/reset', function(req, res) {
 app.post('/refresh', function(req, res) {
   let ledger = getLedgerJson();
 
-  updateClient(res, ledger);
+  updateClient(req.path, res, ledger);
 });
 
 //expense form submit
 app.post('/submit', function(req, res) {
-  console.log('Entry received:\n', req.body);
-
-  //add new expense to ledger list
   let ledger = getLedgerJson();
-  req.body.portions = JSON.parse('[' + req.body.portions + ']');
-  req.body.amount = parseFloat(req.body.amount);
-  let newIndex = Object.keys(ledger.list).length;
-  ledger.list[newIndex] = req.body;
-  ledger.list[newIndex].deleted = false;
 
-  updateClient(res, ledger);
+  if (server.state == 'active') {
+    console.log('Entry received:\n', req.body);
+
+    //add new expense to ledger list
+    req.body.portions = JSON.parse('[' + req.body.portions + ']');
+    req.body.amount = parseFloat(req.body.amount);
+    let newIndex = Object.keys(ledger.list).length;
+    ledger.list[newIndex] = req.body;
+    ledger.list[newIndex].deleted = false;
+  }
+
+  updateClient(req.path, res, ledger);
   updateJson('ledger/active.json', ledger);
 });
 
 //delete individual expense (trash can on each row)
 app.post('/delete', function(req, res) {
-  console.log('Deleted index: ', req.body.index);
-
   let ledger = getLedgerJson();
-  ledger.list[parseInt(req.body.index)].deleted = true;
 
-  updateClient(res, ledger);
+  if (server.state == 'active') {
+    console.log('Deleted index: ', req.body.index);
+
+    ledger.list[parseInt(req.body.index)].deleted = true;
+  }
+
+  updateClient(req.path, res, ledger);
   updateJson('ledger/active.json', ledger);
 });
 
 //undo individual expense deletion
 app.post('/undo', function(req, res) {
-  console.log('Undone index: ', req.body.index);
-
   let ledger = getLedgerJson();
-  ledger.list[parseInt(req.body.index)].deleted = false;
 
-  updateClient(res, ledger);
+  if (server.state == 'active') {
+    console.log('Undone index: ', req.body.index);
+
+    ledger.list[parseInt(req.body.index)].deleted = false;
+  }
+
+  updateClient(req.path, res, ledger);
   updateJson('ledger/active.json', ledger);
 });
 

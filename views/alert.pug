@@ -1,0 +1,6 @@
+include disabled.pug
+.container.fixed-top.mt-2(style='text-align: center; pointer-events: none')
+  .alert.alert-secondary.alert-dismissible.fade.show#stateUpdateAlert(role='alert' style='display: inline-block; box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);')
+    strong= alert
+    button.close(data-dismiss='alert' aria-label='Close')
+      span(aria-hidden='true') &times;

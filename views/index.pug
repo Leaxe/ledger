@@ -152,9 +152,9 @@ head
                     tr(style='background-color: rgba(0, 0, 0, 0)')
                       each portion in expense.portions
                         td= '$' + portion
-.container.fixed-bottom.collapse(id='undoAlert' style='text-align: center')
-  .alert.alert-dark(role='alert' style='display: inline-block; box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5); white-space: nowrap')
-    strong.mr-2 Expense deleted.
+.container.mb-2.fixed-bottom.collapse#undoAlert(style='text-align: center; margin-bottom: .5 rem; pointer-events: none')
+  .alert.mb-0.alert-secondary(role='alert' style='display: inline-block; box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5); white-space: nowrap')
+    strong.mr-2(style='vertical-align: middle') Expense deleted.
     button#undoButton.btn.btn-primary.mr-3 Undo
     button.close.align-middle(data-toggle='collapse' data-target='#undoAlert' style='line-height: inherit; float: none;') &times;
 script
