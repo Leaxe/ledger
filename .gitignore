@@ -1,4 +1,3 @@
 node_modules
 *.swp
-ledger
-server.json
+ledger/archive

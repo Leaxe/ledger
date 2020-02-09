@@ -6,7 +6,8 @@ const bodyParser = require("body-parser");
 const _ = require('lodash');
 const fs = require('fs');
 
-app.use(express.static('public'));
+app.use('/', express.static(path.join(__dirname, 'public')));
+app.use('/archive', express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -21,9 +22,19 @@ app.set('view engine', 'pug');
 //  (everyone pays before starting a new month)
 let server = JSON.parse(fs.readFileSync('server.json'));
 
-let getLedgerJson = function(date = 'active') {
+let print = function() {
+  let obj = {};
+  Error.captureStackTrace(obj, print);
+  let stackTop = obj.stack.split('\n')[1];
+  console.log('\x1b[36m%s\x1b[0m', path.basename(stackTop).slice(0, -1));
+  Object.values(arguments).forEach(el => console.log(JSON.stringify(el, null, '\t')));
+}
+
+let getLedgerJson = function(fileName = 'active') {
   //for the future: if you want to be able to view old months expenses
-  if (date != 'active') {}
+  if (fileName != 'active') {
+    return JSON.parse(fs.readFileSync(`ledger/archive/${fileName}.json`));
+  }
 
   return JSON.parse(fs.readFileSync('ledger/active.json'));
 }
@@ -205,6 +216,27 @@ app.get('/reset', function(req, res) {
 
   updateClient(req.path, res, template);
   updateJson('ledger/active.json', template);
+});
+
+//archived ledger menu
+app.get('/archive', function(req, res) {
+  let fileNames = fs.readdirSync('./ledger/archive/').map(str => path.parse(str).name);
+  let files = fileNames.map(function(fileName) {
+    let ledger = getLedgerJson(fileName);
+    formatLedger(ledger);
+    return {
+      name: fileName,
+      balancedRent: ledger.balancedRent
+    }
+  });
+  res.render('archiveMenu', {files: files, server: server});
+})
+
+//read archived ledgers
+app.get('/archive/:fileName', function(req, res) {
+  let ledger = getLedgerJson(req.params.fileName);
+
+  updateClient(req.path, res, ledger);
 });
 
 //refresh button on ledger table

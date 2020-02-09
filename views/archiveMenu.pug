@@ -1,0 +1,20 @@
+doctype html
+head
+  include head.pug
+  title Archive
+include navbar.pug
+.container
+  h1 ledger/archive
+  table.table.table-striped.table-sm.table-hover(style='empty-cells: show;')
+    thead
+      tr
+        th(scope='col') Date
+        each mate in server.mates
+          th(scope='col')= mate.name
+    each file in files
+      tbody
+        tr
+          td
+            a(style='color: #5181b4;' href='/archive/' + file.name)= file.name
+          each rent in file.balancedRent
+            td= rent

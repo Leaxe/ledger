@@ -12,7 +12,17 @@ input[type="date"]
   -webkit-appearance: none;
 }
 
+#navbarMain a {
+  transition: none;
+}
+
+#navbarMain a:hover {
+  color: #5181b4;
+}
+
 #goBackButton {
+  position: absolute;
+  left: 0;
   border-radius: 0 0.3rem 0.3rem 0 !important;
 }
 
@@ -112,6 +122,18 @@ input[type="date"]
 
 .rowBody:hover tr {
   background-color: var(--very-dark) !important;
+}
+
+#undoAlert {
+  text-align: center;
+  margin-bottom: .5 rem;
+  pointer-events: none;
+}
+
+#undoAlert > .alert {
+  display: inline-block;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
 }
 
 @media (max-width: 575.98px) {

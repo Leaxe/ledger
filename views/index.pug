@@ -1,29 +1,18 @@
 doctype html
 head
-  meta(charset='utf-8')
-  meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
-  script(src='js/jquery-3.4.1.min.js')
-  script(src='js/bootstrap/bootstrap.bundle.min.js')
-  //script(src='//cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/datatables.min.js')
-  
-  script(src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js')
-  link(rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css')
-  
-  link(rel='stylesheet' href='css/bootstrap/bootstrap_dark.min.css')
-  link(rel='stylesheet' href='css/stylesheet.css')
-  
-  //link(rel='stylesheet' href='//cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/datatables.min.css')
+  include head.pug
   title Expenses
   script let deleteIndex = -1;
+include navbar.pug
 .container
-  #rentDue.jumbotron.mt-3.py-3.mb-3
+  #rentDue.jumbotron.py-3.mb-3
     .row
       .col
         h2 Monthly rent: 
           small.text-muted= ledger.totalRent
       .col-2
         div(style='position:relative; height:100%')
-          button#rentButton.btn.btn-warning.mb-2(style='position:absolute; right:0; bottom:0') Pay&#160;rent
+          button#rentButton.btn.btn-primary.mb-2(style='position:absolute; right:0; bottom:0') Pay&#160;rent
     table.table.table-borderless.table-sm
       thead
         tr
@@ -152,8 +141,8 @@ head
                     tr(style='background-color: rgba(0, 0, 0, 0)')
                       each portion in expense.portions
                         td= '$' + portion
-.container.mb-2.fixed-bottom.collapse#undoAlert(style='text-align: center; margin-bottom: .5 rem; pointer-events: none')
-  .alert.mb-0.alert-secondary(role='alert' style='display: inline-block; box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5); white-space: nowrap')
+.container.mb-2.fixed-bottom.collapse#undoAlert
+  .alert.mb-0.alert-secondary(role='alert' style='')
     strong.mr-2(style='vertical-align: middle') Expense deleted.
     button#undoButton.btn.btn-primary.mr-3 Undo
     button.close.align-middle(data-toggle='collapse' data-target='#undoAlert' style='line-height: inherit; float: none;') &times;
