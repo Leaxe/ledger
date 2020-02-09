@@ -124,7 +124,11 @@ let updateClient = function(path, res, ledger) {
 
   let mates = JSON.stringify(server.mates.map(mate => mate.name));
   //send to client
-  if (server.state == 'active') {
+  // use nested res.renders with callbacks to append pug files and server alerts
+  if (path.slice(1, 8) === 'archive') {
+    res.render('archive', {ledger: ledgerComputed, server: server, mates: mates});
+  }
+  else if (server.state == 'active') {
     res.render('index', {ledger: ledgerComputed, server: server, mates: mates});
   }
   else {

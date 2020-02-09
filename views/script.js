@@ -194,7 +194,7 @@ $(document).ready(function() {
       undoAlert.collapse('show');
       setTimeout(function() {
         undoAlert.collapse('hide');
-      }, 50000);
+      }, 10000);
     }
     
     setTimeout(function() {
