@@ -113,7 +113,6 @@ let formatLedger = function(ledger) {
 
 //update ledger object and send rendered page to client
 let updateClient = function(path, res, ledger) {
-  console.log(path);
   //compute rent values and format for pug
   let ledgerComputed = computeLedger(ledger);
   formatLedger(ledgerComputed);
@@ -181,12 +180,13 @@ app.get('/back', function(req, res) {
   let serverJson = JSON.stringify(server, null, 2);
   fs.writeFileSync('server.json', serverJson, (err)={});
 
-  updateClient(res, ledger);
+  updateClient(req.path, res, ledger);
 });
 
 //progress to next month and set server back to active state
 app.get('/reset', function(req, res) {
   let ledger = getLedgerJson();
+  let template;
 
   if (server.state == 'disabled') {
     console.log('reset');
@@ -204,7 +204,8 @@ app.get('/reset', function(req, res) {
     fs.copyFileSync('ledger/active.json', newPath);
 
     //create new active.json
-    let template = JSON.parse(fs.readFileSync('ledger/template.json'));
+    template = JSON.parse(fs.readFileSync('ledger/template.json'));
+
     let newDate = new Date(ledger.date);
     newDate.setUTCMonth(newDate.getUTCMonth() + 1);
     let year = newDate.getUTCFullYear();
