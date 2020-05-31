@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "onion": "mkdir ledger\\archive",
-    "start": "nodemon -e pug,js,css"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
