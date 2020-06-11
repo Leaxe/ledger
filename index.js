@@ -244,6 +244,10 @@ app.get('/archive/:fileName', function(req, res) {
   updateClient(req.path, res, ledger);
 });
 
+app.get('/options', function(req, res) {
+  
+});
+
 //refresh button on ledger table
 app.post('/refresh', function(req, res) {
   let ledger = getLedgerJson();
