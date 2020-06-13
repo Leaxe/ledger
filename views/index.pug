@@ -122,7 +122,7 @@ include navbar.pug
           td.text-right= expense.amount.substr(0,expense.amount.indexOf('.'))
             span.text-muted= expense.amount.substr(expense.amount.indexOf('.'))
           td
-            button.deleteButton
+            button.tableRowBtn
               span.ui-icon-trash
         tr.collapseRow
           td(colspan='6' style='padding-top: 0; padding-bottom: 0')

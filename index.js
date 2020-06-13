@@ -245,7 +245,7 @@ app.get('/archive/:fileName', function(req, res) {
 });
 
 app.get('/options', function(req, res) {
-  
+  res.render('options');
 });
 
 //refresh button on ledger table

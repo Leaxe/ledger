@@ -85,13 +85,27 @@ input[type="date"]
   background-repeat: no-repeat;
 }
 
-.deleteButton {
+.ui-icon-edit {
+  display: inline-block;
+  vertical-align: middle;
+  background-position: -64px -112px;
+  background-image: url(../images/ui-icons_ffffff_256x240.png);
+  width: 16px;
+  height: 16px;
+  margin-top: -.25em;
+  position: relative;
+  text-indent: -99999px;
+  overflow: hidden;
+  background-repeat: no-repeat;
+}
+
+.tableRowBtn {
   background-color: rgba(0, 0, 0, 0);
   border: 0;
   border-radius: 3px;
 }
 
-.deleteButton:hover {
+.tableRowBtn:hover {
   background-color: rgba(255, 255, 255, .05);
 }
 
