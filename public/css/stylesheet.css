@@ -57,6 +57,13 @@ input[type="date"]
   border: none;
 }
 
+.table-warning, .table-warning td {
+  background-color: #481010;
+}
+.table-success, .table-success td {
+  background-color: #003829;
+}
+
 #slider > .ui-slider-handle {
   width: 0.8em;
   height: 1.3em;
@@ -117,11 +124,11 @@ input[type="date"]
   background-color: var(--bg);
 }
 
-.table-striped tbody tr td {
+.table tbody tr td {
   border: none;
 }
 
-.table-striped thead tr th {
+.table thead tr th {
   border-top: none;
 }
 
