@@ -96,6 +96,21 @@ include navbar.pug
     .col-3.text-right
       div(style='position:relative; height:100%')
         button#refreshButton.btn.btn-primary.mb-2(style='position:absolute; right:0; bottom:0') Refresh
+  if (ledger.rollovers && ledger.rollovers.length)
+    h4.mb-0 Rollover
+    table#rolloverTable.table.table-sm.table-hover
+      thead
+        tr
+          th(scope='col' style='width: 15%; min-width: 7em') Type
+          each mate in server.mates
+            th(scope='col')= mate.name
+      tbody
+        each rollover in ledger.rollovers
+          tr(class=rollover.type=='This month'?'table-warning':'table-success')
+            td= rollover.type
+            each portion in rollover.portions
+              td= portion
+    h4.mb-0 Expenses
   table#ledgerTable.table.table-striped.table-sm.table-hover
     thead#ledgerTableHead
       tr
@@ -126,7 +141,7 @@ include navbar.pug
               else
                 .col= expense.description
               .col
-                table.table.table-sm.mb-0
+                table.table.breakdown-table.table-sm.mb-0
                   thead
                     tr(style='background-color: rgba(0, 0, 0, 0)')
                       each mate in server.mates
@@ -134,7 +149,7 @@ include navbar.pug
                   tbody
                     tr(style='background-color: rgba(0, 0, 0, 0)')
                       each portion in expense.portions
-                        td= '$' + portion
+                        td= portion
 .container.fixed-bottom.collapse(id='undoAlert' style='text-align: center')
   .alert.alert-dark(role='alert' style='display: inline-block; box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5); white-space: nowrap')
     strong.mr-2 Expense deleted.

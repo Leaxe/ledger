@@ -211,6 +211,8 @@ $(document).ready(function() {
     $('#rentButton').on('click', function(e) {
       $.get('/disabled').done(updateBody);
     });
+
+    $('[data-toggle="tooltip"]').tooltip({delay: {show: 600, hide: 0}});
   }
 
   $('#sliderCollapse').on('show.bs.collapse', function(e) {
