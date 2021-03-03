@@ -23,8 +23,8 @@ app.set('view engine', 'pug');
 const config = {
   authRequired: true,
   auth0Logout: true,
-  secret: 'a long, randomly-generated string stored in env',
-  baseURL: 'http://localhost:3000',
+  secret: 'a long, randomly-generated string stored in env', //Create a .env file and create a random string, paste the string in the .env file, you can use `openssl rand -hex 32` to generate a properly secure string
+  baseURL: 'http://localhost:3000', // The URL where the application is served
   clientID: 'a9FJVM9xDkFsT3PT4aaMmGvy98B2PG6Y',
   issuerBaseURL: 'https://dev-0yifh9iy.us.auth0.com'
 };
@@ -35,10 +35,6 @@ app.use(auth(config));
 // req.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
-});
-
-app.get('/profile', requiresAuth(), (req, res) => {
-  res.send(JSON.stringify(req.oidc.user));
 });
 
 //server state can be active (adding expenses) or disabled
