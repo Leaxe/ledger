@@ -5,6 +5,8 @@ const path = require('path');
 const bodyParser = require("body-parser");
 const _ = require('lodash');
 const fs = require('fs');
+const { auth } = require('express-openid-connect');
+const { requiresAuth } = require('express-openid-connect');
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/archive', express.static(path.join(__dirname, 'public')));
@@ -17,6 +19,27 @@ app.use(bodyParser.urlencoded({
 //init pug
 app.set('views', './views');
 app.set('view engine', 'pug');
+
+const config = {
+  authRequired: true,
+  auth0Logout: true,
+  secret: 'a long, randomly-generated string stored in env',
+  baseURL: 'http://localhost:3000',
+  clientID: 'a9FJVM9xDkFsT3PT4aaMmGvy98B2PG6Y',
+  issuerBaseURL: 'https://dev-0yifh9iy.us.auth0.com'
+};
+
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config));
+
+// req.isAuthenticated is provided from the auth router
+app.get('/', (req, res) => {
+  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+});
+
+app.get('/profile', requiresAuth(), (req, res) => {
+  res.send(JSON.stringify(req.oidc.user));
+});
 
 //server state can be active (adding expenses) or disabled
 //  (everyone pays before starting a new month)
