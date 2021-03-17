@@ -83,14 +83,21 @@ $(document).ready(function() {
     }
   }
 
-  function initCustomPayment() {
+  function initWhoPays() {
     //keep track of what kind of value we have
     let amountVal = document.getElementById('amountInput').value;
     let labelDataType = amountVal ? 'money' : 'percent';
     $('#slider').data('valAmt', amountVal);
     $('#slider').data('valType', labelDataType);
 
-    $('#slider').slider(sliderOptions);
+    $.widget('ui.slider', $.ui.slider, {
+      update: function() {
+
+      }
+    });
+
+    let slider = $('#slider').slider(sliderOptions);
+    $('#slider').slider('update');
 
     $('#amountInput').on('input', function(e) {
       if (e.target.value) {
@@ -104,26 +111,95 @@ $(document).ready(function() {
       updateLabels($('#slider').slider('option', 'values'));
     });
 
-    $('#whoPays').on('change', function(e) {
-      let vals = [];
-      vals.length = mates.length - 1;
-      if (e.target.value == 'Everyone') {
-        for (let i = 1; i < mates.length; i++) {
-          vals[i - 1] = 100 / mates.length * i;
-        }
-      }
-      else {
-        let index = mates.indexOf(e.target.value);
-        vals.fill(100);
-        vals.fill(0, 0, index);
-      }
-
-      $('#slider').slider('option', 'values', vals);
-      updateLabels(vals);
-    });
+    // $('#whoPays').on('change', function(e) {
+    //   let vals = [];
+    //   vals.length = mates.length - 1;
+    //   if (e.target.value == 'Everyone') {
+    //     for (let i = 1; i < mates.length; i++) {
+    //       vals[i - 1] = 100 / mates.length * i;
+    //     }
+    //   }
+    //   else {
+    //     let index = mates.indexOf(e.target.value);
+    //     vals.fill(100);
+    //     vals.fill(0, 0, index);
+    //   }
+    //
+    //   $('#slider').slider('option', 'values', vals);
+    //   updateLabels(vals);
+    // });
 
     updateLabels($('#slider').slider('option', 'values'));
+
+    $('#whoPays').selectpicker();
   }
+
+  let observer = new MutationObserver(function(mutations) {
+    if ($('#expenseForm .bootstrap-select.show-tick').length) {
+      $('#expenseForm .bootstrap-select.show-tick').attr('id', 'whoPaysSelect');
+      //styling
+      $('#whoPaysSelect').addClass('form-control');
+      $('#whoPaysSelect > button').addClass('custom-select');
+      $('#whoPaysSelect .bs-actionsbox button').removeClass('btn-light').addClass('btn-secondary');
+
+      let whoPays = $('#whoPays');
+      let options = whoPays.children().toArray().filter(option => !option.dataset.divider);
+      let lastOptionSelections = options.map(option => option.selected);
+      //repurpose select all button
+      $('#whoPaysSelect .bs-select-all').removeClass('actions-btn bs-select-all').on('click', function(e) {
+        e.stopPropagation();
+        for (const [i, option] of options.entries()) {
+          if (i < options.length - 1) option.selected = true;
+          else option.selected = false;
+        }
+        whoPays.selectpicker('refresh');
+        lastOptionSelections = options.map(option => option.selected);
+      });
+      whoPays.on('change', function() {
+        let optionSelections = options.map(option => option.selected);
+        let selectedOptionIndices = optionSelections.flatMap((option, i) => (option && !lastOptionSelections[i]) ? i : []);
+        //something has been selected (vs deselected)
+        if (selectedOptionIndices.length >= 1) {
+          //if it's custom, deselect all others
+          if (selectedOptionIndices.includes(options.length - 1)) {
+            for (const [i, option] of options.entries()) {
+              if (i < options.length - 1) option.selected = false;
+            }
+            whoPays.selectpicker('refresh').selectpicker('toggle');
+            $('#sliderCollapse').collapse('show');
+          }
+          //otherwise deselect custom
+          else {
+            options[options.length - 1].selected = false;
+            whoPays.selectpicker('refresh');
+          }
+        }
+
+        lastOptionSelections = options.map(option => option.selected);
+
+        //update sliders
+        let nonCustomOptions = options.slice(0, options.length - 1);
+        let numSelected = nonCustomOptions.filter(option => option.selected).length;
+        if (numSelected > 0) {
+          let equalPortionAmount = 100 / numSelected;
+          let currentValue = 0;
+          let vals = [];
+          for (const option of nonCustomOptions) {
+            if (option.selected) currentValue += equalPortionAmount;
+            vals.push(currentValue);
+          }
+
+          $('#slider').slider('option', 'values', vals);
+          updateLabels(vals);
+        }
+      });
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.getElementById('expenseForm'), {
+    childList: true,
+    subtree: true
+  });
 
   let valuesArray = [];
   for (let i = 1; i < mates.length; i++) {
@@ -164,7 +240,7 @@ $(document).ready(function() {
       $('#whoPaid').val(whoPaidCookie);
     }
 
-    initCustomPayment();
+    initWhoPays();
 
     $('#expenseForm').on('submit', function(e) {
       e.preventDefault();
@@ -196,7 +272,7 @@ $(document).ready(function() {
         undoAlert.collapse('hide');
       }, 10000);
     }
-    
+
     setTimeout(function() {
       $('#stateUpdateAlert').fadeOut(500);
     }, 10000);

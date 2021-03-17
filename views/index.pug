@@ -34,7 +34,7 @@ include navbar.pug
   h1 Add expense
   form#expenseForm
     .row.mb-3
-      .col
+      .col-sm-6.mb-3.mb-sm-0
         .input-group
           .input-group-prepend
             span.input-group-text Date
@@ -48,7 +48,7 @@ include navbar.pug
             each category in server.categories
               option= category
     .row.mb-3
-      .col
+      .col-sm-6.mb-3.mb-sm-0
         .input-group
           .input-group-prepend
             span.input-group-text Who paid
@@ -56,16 +56,16 @@ include navbar.pug
             option(disabled value='' selected hidden) Who paid...
             each mate in server.mates
               option= mate.name
-      .col
+      .col-sm-6
         .input-group
           .input-group-prepend
             button#whoPaysButton.btn.btn-secondary(type='button' data-toggle='collapse' data-target='#sliderCollapse') Who pays 
               img#whoPaysButtonChevron(src='/images/chevron-down.svg')
-          select#whoPays.custom-select(required name='whoPays')
-            option(hidden) Custom
-            option(selected) Everyone
+          select#whoPays(required name='whoPays' style='display:none' data-actions-box='true' multiple)
             each mate in server.mates
-              option= mate.name
+              option(selected value=mate.name)= mate.name
+            option(data-divider='true')
+            option Custom
     #sliderCollapse.container.collapse(style='text-align: center;')
       div(style="display: inline-block; width: calc(100% - 1.2em);")
         #mateNames.sliderTagRow.row.mb-0

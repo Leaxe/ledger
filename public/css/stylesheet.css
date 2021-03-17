@@ -33,6 +33,7 @@ input[type="date"]
 
 #whoPaysButton {
   padding-right: 0.375rem;
+  height: 2.28125rem;
 }
 
 #whoPaysButtonChevron {
@@ -49,6 +50,42 @@ input[type="date"]
 /* avoids jolt for some reason*/
 #sliderCollapse.collapsing {
   /*overflow: hidden;*/
+}
+/*
+#expenseForm .bootstrap-select.show-tick {
+  position: relative;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  width: 1%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}*/
+
+#whoPaysSelect {
+  height: 2.25rem;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+#whoPaysSelect > button {
+  background-color: white;
+  color: var(--secondary);
+}
+
+#whoPaysSelect > button::after {
+  content: none;
+}
+
+.dropdown-menu {
+  background-color: white;
+}
+
+.dropdown-menu .dropdown-item {
+  color: var(--secondary);
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #ccc;
 }
 
 .ui-slider.ui-slider-horizontal {
