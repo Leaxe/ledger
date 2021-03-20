@@ -6,7 +6,7 @@
   "scripts": {
     "onion": "mkdir ledger\\archive",
     "start": "node index.js",
-    "dev": "nodemon -e pug,js,css"
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -24,9 +24,14 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "pug": "^2.0.4"
+    "pug": "^3.0.1"
   },
   "nodemonConfig": {
-    "ignore": ["*.json"]
+    "ignore": [
+      "*.json"
+    ]
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }
