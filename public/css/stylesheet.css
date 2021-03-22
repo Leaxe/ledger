@@ -106,13 +106,13 @@ input[type="date"]
   background-repeat: no-repeat;
 }
 
-.tableRowBtn {
+.deleteButton {
   background-color: rgba(0, 0, 0, 0);
   border: 0;
   border-radius: 3px;
 }
 
-.tableRowBtn:hover {
+.deleteButton:hover {
   background-color: rgba(255, 255, 255, .05);
 }
 

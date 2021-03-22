@@ -21,14 +21,14 @@ include navbar.pug
             th.h5(scope='col')= mate.name
         tr
           th.h5.text-right(scope='row') Base rent
-          each mate in ledger.baseRent
-            td= mate.substr(0, mate.indexOf('.'))
-              span.text-muted= mate.substr(mate.indexOf('.'))
+          each rent in Object.fromEntries(ledger.baseRent)
+            td= rent.substr(0, rent.indexOf('.'))
+              span.text-muted= rent.substr(rent.indexOf('.'))
         tr
           th.h5.text-right(scope='row') Balanced rent
-          each mate in ledger.balancedRent
-            td= mate.substr(0, mate.indexOf('.'))
-              span.text-muted= mate.substr(mate.indexOf('.'))
+          each rent in Object.fromEntries(ledger.balancedRent)
+            td= rent.substr(0, rent.indexOf('.'))
+              span.text-muted= rent.substr(rent.indexOf('.'))
           
 #addExpense.container(data-mates= mates)
   h1 Add expense
@@ -137,7 +137,7 @@ include navbar.pug
           td.text-right= expense.amount.substr(0,expense.amount.indexOf('.'))
             span.text-muted= expense.amount.substr(expense.amount.indexOf('.'))
           td
-            button.tableRowBtn
+            button.deleteButton
               span.ui-icon-trash
         tr.collapseRow
           td(colspan='6' style='padding-top: 0; padding-bottom: 0')

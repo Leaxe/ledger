@@ -109,19 +109,20 @@ let computeLedger = function(ledger) {
 
     rent.set(expense.whoPaid, rent.get(expense.whoPaid) - expense.amount);  //person who paid is compensated
     //rent = sumPortions(rent, expense.portions);      //everyone else coughs up
-    console.log(rent);
     rent.forEach((val, mate) => rent.set(mate, val + expense.portions[mate]));
-    console.log(rent);
   }
 
+
   //rollover
-  let underflow = !Object.values(rent).every(x => x >= 0);
+  let underflow = !Array.from(rent.values()).every(x => x >= 0);
   if (underflow) {
-    let underflowIdxs = Object.values(rent).reduce((a, e, i) => {if (e < 0) a.push(i); return a;}, []);
+    //TODO: see if we can move away from indexes, seems real jank
+    let underflowIdxs = Array.from(rent.values())
+      .reduce((a, e, i) => {if (e < 0) a.push(i); return a;}, []);
 
     let rollovers = [];
     for (let underflowIdx of underflowIdxs) { //add a rollover expense for each underflowed roommate
-      let underflowMate = Object.keys(rent)[underflowIdx];
+      let underflowMate = Array.from(rent.keys())[underflowIdx];
       let underflowAmount = rent.get(underflowMate);
       
       //sum portions of all expenses that put current underflowed roommate negative
@@ -161,7 +162,10 @@ let computeLedger = function(ledger) {
       //rolloverExpense.category = 'Rollover';
       rolloverExpense.type = 'This month';
       rolloverExpense.amount = 0;
-      rolloverExpense.portions = round(rolloverPortions, 2).map(x => parseFloat(x));
+      //rolloverExpense.portions = round(rolloverPortions, 2).map(x => parseFloat(x));
+      rolloverPortions = round(rolloverPortions, 2).map(x => parseFloat(x));
+      rolloverExpense.portions = {};
+      server.mates.forEach((key, i) => rolloverExpense.portions[key.name] = rolloverPortions[i]);
       rolloverExpense.whoPaid = underflowMate;
 
       rollovers.push(rolloverExpense);
@@ -175,11 +179,9 @@ let computeLedger = function(ledger) {
     for (let i = 0; i < list.length; i++) {
       let expense = list[i];
 
-      rent[expense.whoPaid] -= expense.amount;  //person who paid is compensated
-      for (let i = 0; i < server.mates.length; i++) {
-        let mate = server.mates[i].name;
-        rent[mate] += expense.portions[i];      //everyone else coughs up
-      }
+      rent.set(expense.whoPaid, rent.get(expense.whoPaid) - expense.amount);  //person who paid is compensated
+      //rent[mate] += expense.portions[i];      //everyone else coughs up
+      rent.forEach((val, mate) => rent.set(mate, val + expense.portions[mate]));
     }
 
   }
@@ -192,22 +194,20 @@ let computeLedger = function(ledger) {
 let formatDollars = function(amount, precision = 2) {
   let prefix = x => x >= 0 ? "$" : "-$";
   if (amount instanceof Array) {
-    return amount.map(x => prefix(x) + x.toFixed(precision));
+    return amount.map(x => prefix(x) + Math.abs(x).toFixed(precision));
   }
   else {
-    return prefix(amount) + amount.toFixed(precision);
+    return prefix(amount) + Math.abs(amount).toFixed(precision);
   }
 }
 
 //converts convert from data in json to formatted strings ($'s, .00's, etc.)
 let formatLedger = function(ledger) {
   ledger.totalRent = formatDollars(ledger.totalRent, 0);
-  print('asdf');
-  console.log(ledger.baseRent);
-  ledger.baseRent.forEach(person => 
-    ledger.baseRent.set(person, formatDollars(ledger.baseRent.get(person))));
-  ledger.balancedRent.forEach(person =>
-    ledger.balancedRent.set(person, formatDollars(ledger.balancedRent.get(person))));
+  ledger.baseRent.forEach((rent, mate) => 
+    ledger.baseRent.set(mate, formatDollars(rent)));
+  ledger.balancedRent.forEach((rent, mate) =>
+    ledger.balancedRent.set(mate, formatDollars(rent)));
 
   //convert 'yyyy-mm' to 'mmm yyyy'
   const dateObjectMonth = new Date(ledger.date);
@@ -229,9 +229,7 @@ let formatLedger = function(ledger) {
     expense.date = new Date(expense.date);
     expense.date.setHours(expense.date.getHours());
     expense.date = dateFormatDay.format(expense.date);
-    console.log(expense.portions);
     expense.portions = formatDollars(Object.values(expense.portions));
-    console.log(expense.portions);
   }
 
   //sort for most recent at the top
@@ -239,23 +237,30 @@ let formatLedger = function(ledger) {
   ledger.list.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   //format rollover portions
+  //TODO: figure out why there are separate rollovers that need to be summed here
   if (ledger.rollovers) {
     let lastRollover = {};
     lastRollover.type = 'Last month';
     //sum the portions of all 'Last month' expenses
     lastRollover.portions = ledger.rollovers.filter(r => r.type == 'Last month')
-      .reduce((portions, e) => portions.map((p, i) => p + e.portions[i]), new Array(server.mates.length).fill(0));
+      .reduce((portions, e) => {
+        return portions.map((p, i) => p + Object.values(e.portions)[i]);
+      }, new Array(server.mates.length).fill(0));
     let thisRollover = {};
     thisRollover.type = 'This month';
     //sum the portions of all 'Next month' expenses
     thisRollover.portions = ledger.rollovers.filter(r => r.type == 'This month')
-      .reduce((portions, e) => portions.map((p, i) => p + e.portions[i]), new Array(server.mates.length).fill(0));
+      .reduce((portions, e) => {
+        return portions.map((p, i) => p + Object.values(e.portions)[i]);
+      }, new Array(server.mates.length).fill(0));
     ledger.rollovers = [];
     //only add the rollover if it does something
     if (!Object.values(lastRollover.portions).every(x => x == 0)) ledger.rollovers.push(lastRollover);
     if (!Object.values(thisRollover.portions).every(x => x == 0)) ledger.rollovers.push(thisRollover);
     for (rollover of ledger.rollovers) {
-      rollover.portions = rollover.portions.map(p => formatDollars(p));
+      rollover.portions.forEach((portion, mate) =>
+        rollover.portions[mate] = formatDollars(portion));
+      //rollover.portions = rollover.portions.map(p => formatDollars(p));
     }
   }
 }
@@ -362,7 +367,7 @@ app.get('/reset', function(req, res) {
       ledger.rollovers.forEach(e => {
         e.category = 'Rollover';
         e.type = 'Last month';
-        e.portions = e.portions.map(p => -p);
+        Object.keys(e.portions).forEach(p => e.portions[p] = -e.portions[p]);
       });
     }
 
@@ -428,10 +433,14 @@ app.post('/submit', function(req, res) {
     console.log('Entry received:\n', req.body);
 
     //add new expense to ledger list
-    req.body.portions = JSON.parse('[' + req.body.portions + ']');
-    req.body.amount = parseFloat(req.body.amount);
+    newExpense = req.body;
+    portions = JSON.parse(newExpense.portions);
+    vals = Object.values(portions);
+    Object.keys(portions).forEach((e, i) => portions[e] = parseFloat(vals[i]));
+    newExpense.portions = portions;
+    newExpense.amount = parseFloat(newExpense.amount);
     let newIndex = Object.keys(ledger.list).length;
-    ledger.list[newIndex] = req.body;
+    ledger.list[newIndex] = newExpense;
     ledger.list[newIndex].deleted = false;
   }
 

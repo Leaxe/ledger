@@ -176,7 +176,9 @@ $(document).ready(function() {
 
       //serialize array and attach mate portions
       let formData = $('#expenseForm').serializeArray();
-      formData[formData.length] = {name: 'portions', value: ranges};
+      let portions = {};
+      ranges.forEach((portion, i) => portions[mates[i]] = portion);
+      formData[formData.length] = {name: 'portions', value: JSON.stringify(portions)};
 
       $.post('/submit', formData).done(updateBody);
     });

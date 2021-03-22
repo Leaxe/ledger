@@ -23,12 +23,12 @@ include navbar.pug
             th.h5(scope='col')= mate.name
         tr
           th.h5.text-right(scope='row') Base rent
-          each mate in ledger.baseRent
+          each mate in Object.fromEntries(ledger.baseRent)
             td= mate.substr(0, mate.indexOf('.'))
               span.text-muted= mate.substr(mate.indexOf('.'))
         tr
           th.h5.text-right(scope='row') Balanced rent
-          each mate in ledger.balancedRent
+          each mate in Object.fromEntries(ledger.balancedRent)
             td= mate.substr(0, mate.indexOf('.'))
               span.text-muted= mate.substr(mate.indexOf('.'))
           
