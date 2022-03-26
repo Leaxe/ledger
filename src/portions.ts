@@ -27,7 +27,7 @@ export class Portions {
         return Array.from(this.portions.values());
     }
 
-    portionsToString(): string[] {
+    toString(): string[] {
         return this.getPortionsArray().map((x) => x.toFixed(2));
     }
 }

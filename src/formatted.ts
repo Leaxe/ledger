@@ -1,5 +1,6 @@
-import { Portions } from './portions';
+import { Ledger } from './ledger';
 import { Server } from './server';
+import { Expense } from './expense';
 
 export class FormattedServer {
     date: string;
@@ -9,23 +10,23 @@ export class FormattedServer {
 
     constructor(server: Server) {
         this.date = server.date.toString();
-        this.totalRent = server.totalRent.toString();
-        this.baseRent = server.baseRent.portionsToString();
+        this.totalRent = server.getTotalRent().toString();
+        this.baseRent = server.baseRent.toString();
         this.mates = server.baseRent.getMates();
     }
 }
 
-class FormattedLedger {
+export class FormattedLedger {
     balancedRent: string[];
     list: FormattedExpense[];
 
-    constructor(ledger: Ledger, rent: Portions) {
-        this.balancedRent = rent.portionsToString();
+    constructor(ledger: Ledger) {
+        this.balancedRent = ledger.balancedRent.toString();
         this.list = ledger.formatExpenses();
     }
 }
 
-class FormattedExpense {
+export class FormattedExpense {
     date: string;
     category: string;
     whoPaid: string;
@@ -39,6 +40,6 @@ class FormattedExpense {
         this.whoPaid = expense.whoPaid.toString();
         this.whoPays = expense.whoPays;
         this.amount = expense.amount.toString();
-        this.portions = expense.portions.portionsToString();
+        this.portions = expense.portions.toString();
     }
 }

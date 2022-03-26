@@ -1,12 +1,19 @@
-class Expense {
-    date: string;
-    category: string;
-    whoPaid: Mate;
-    whoPays: string;
-    description: string;
-    amount: Dollar;
-    portions: Portions;
-    deleted: boolean;
+import { FormattedExpense } from './formatted';
+import { Dollar } from './basic';
+import { Portions } from './portions';
+
+export class Expense {
+
+    constructor(
+        public date: string,
+        public category: string,
+        public whoPaid: string,
+        public whoPays: string,
+        public description: string,
+        public amount: Dollar,
+        public portions: Portions,
+        public deleted: boolean
+    ) {}
 
     formatExpense(): FormattedExpense {
         return new FormattedExpense(this);

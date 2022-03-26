@@ -1,6 +1,7 @@
 import { Dollar } from './basic';
 import { Portions } from './portions';
 import { Server, ServerState } from './server';
+import { Ledger } from './ledger';
 import * as fs from 'fs';
 
 const activeJsonPath: fs.PathLike = './ledger/active.json';

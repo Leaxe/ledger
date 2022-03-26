@@ -1,5 +1,6 @@
 import { Portions } from './portions';
 import { Currency } from './basic';
+import { FormattedServer } from './formatted';
 
 export enum ServerState {
     Active,
