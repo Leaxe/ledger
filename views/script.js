@@ -151,7 +151,7 @@ $(document).ready(function() {
   let sliderOptions = {
     min: 0,
     max: 100,
-    step: 1,
+    step: 0.001,
     values: valuesArray,
     slide: slideHandler,
     stop: stopHandler
@@ -172,7 +172,7 @@ $(document).ready(function() {
       //get ranges and convert to dollar portions
       let ranges = calculateRanges($('#slider').slider('option', 'values'));
       let amount = $('#slider').data('valAmt');
-      ranges = round(ranges.map(x => x / 100 * amount), 2);
+      ranges = round(ranges.map(x => x * amount / 100), 2);
 
       //serialize array and attach mate portions
       let formData = $('#expenseForm').serializeArray();
